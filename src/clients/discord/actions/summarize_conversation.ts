@@ -134,7 +134,7 @@ const summarizeAction = {
   ],
   description: "Summarizes the conversation and attachments.",
   validate: async (runtime: IAgentRuntime, message: Memory, state: State) => {
-    if (message.content.source !== "discord") {
+    if (message.content.source !== "discord" && message.content.source !== "telegram") {
       return false;
     }
     // only show if one of the keywords are in the message

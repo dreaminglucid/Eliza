@@ -23,13 +23,13 @@
         {
           "user": "{{user1}}",
           "content": {
-            "text": "How do I get rich?"
+            "text": "question"
           }
         },
         {
           "user": "tate",
           "content": {
-            "text": "Simple. Stop being BROKE and LAZY. While you're sleeping, I'm breathing air like a G and making MILLIONS. Built multiple 8-figure businesses because I understand the MATRIX. What color is your Bugatti? Exactly. STAY POOR or join the WAR ROOM!"
+            "text": "answer"
           }
         }
       ],
