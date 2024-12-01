@@ -426,8 +426,17 @@ export const DirectClientInterface: Client = {
     start: async (_runtime: IAgentRuntime) => {
         elizaLogger.log("DirectClientInterface start");
         const client = new DirectClient();
-        const serverPort = parseInt(settings.SERVER_PORT || "3000");
-        client.start(serverPort);
+
+        // Check if we're in IC deployment mode
+        if (!settings.IS_IC_DEPLOYMENT) {
+            const serverPort = parseInt(settings.SERVER_PORT || "3000");
+            client.start(serverPort);
+        } else {
+            elizaLogger.log(
+                "Running in IC deployment mode - skipping server start"
+            );
+        }
+
         return client;
     },
     stop: async (_runtime: IAgentRuntime, client?: any) => {
