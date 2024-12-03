@@ -1,16 +1,18 @@
 {
     "canisters": {
         "agent_framework": {
-            "type": "assets",
-            "source": [
-                "dist"
-            ],
-            "build": [
-                "pnpm install",
-                "pnpm build:ic"
-            ],
-            "declarations": {
-                "output": "declarations"
+            "type": "azle",
+            "main": "ic/index.ts",
+            "custom": {
+                "experimental": true,
+                "candid_gen": "http",
+                "assets": [
+                    [
+                        "dist",
+                        "dist"
+                    ]
+                ],
+                "build_assets": "pnpm build:ic"
             }
         }
     },

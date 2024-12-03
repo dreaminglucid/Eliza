@@ -19,7 +19,15 @@
         "docker:start": "bash ./scripts/docker.sh start",
         "docker": "pnpm docker:build && pnpm docker:run && pnpm docker:bash",
         "test": "bash ./scripts/test.sh",
-        "dfx:deploy": "dfx deploy agent_framework --network ic"
+        "ic:install:local": "dfx canister install agent_framework --wasm interfaces/agent_framework.wasm --mode reinstall -y",
+        "ic:install": "dfx canister --network ic install agent_framework --wasm .azle/agent_framework/agent_framework.wasm --mode reinstall -y",
+        "ic:clean": "dfx stop && rm -rf .dfx",
+        "ic:start": "dfx start --clean --background",
+        "ic:build": "pnpm build:ic",
+        "ic:deploy:local": "pnpm ic:build && dfx deploy agent_framework",
+        "ic:deploy": "pnpm ic:build && dfx deploy agent_framework --network ic",
+        "ic:id": "dfx canister id agent_framework",
+        "ic:dev": "pnpm ic:clean && pnpm ic:start && pnpm ic:deploy:local && cd ic && ts-node cli.ts"
     },
     "devDependencies": {
         "@commitlint/cli": "18.6.1",
