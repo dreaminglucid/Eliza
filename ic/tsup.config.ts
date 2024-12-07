@@ -1,5 +1,4 @@
 import { defineConfig } from "tsup";
-import esbuildPluginAliasPath from 'esbuild-plugin-alias-path';
 
 export default defineConfig({
     entry: ["index.ts"],
@@ -7,7 +6,9 @@ export default defineConfig({
     sourcemap: true,
     clean: true,
     format: ["esm"],
+    noExternal: [/@ai16z\/eliza/],
     external: [
+        // Externalize everything that's not compatible with IC
         "dotenv",
         "fs",
         "path",
@@ -17,35 +18,55 @@ export default defineConfig({
         "http",
         "agentkeepalive",
         "safe-buffer",
-        "@ai16z/eliza",
         "child_process",
         "stream",
         "module",
-        // Node.js built-ins that might cause issues
-        "node:path",
-        "node:stream",
-        "node:process",
         "wasmedge_quickjs",
         "onnxruntime-node",
-    ],
-    esbuildPlugins: [
-        esbuildPluginAliasPath({
-            alias: {
-                "@ai16z/eliza": "../core",
-                // Add any other aliases you need here
-            }
-        })
+        "@anush008/tokenizers",
+        // Explicitly exclude all node: prefixed imports
+        /^node:/
     ],
     esbuildOptions: (options) => {
-        options.conditions = ['import', 'node'];
-        options.platform = 'node';
-        // Handle native addons and problematic imports
+        options.platform = 'neutral'; // Don't assume any platform
+        options.conditions = ['import'];
         options.mainFields = ['module', 'main'];
-        options.banner = {
-            js: `
-                import { createRequire } from 'module';
-                const require = createRequire(import.meta.url);
-            `.trim()
+        options.supported = {
+            'dynamic-import': false,
+            'import-meta': false,
         };
-    }
+        // Replace node: imports with empty objects
+        options.define = {
+            'process.env.NODE_ENV': '"production"',
+            'global': 'globalThis'
+        };
+    },
+    // Handle platform-specific modules
+    esbuildPlugins: [{
+        name: 'ic-compatibility',
+        setup(build) {
+            // Replace node:path imports with empty implementations
+            build.onResolve({ filter: /^node:/ }, () => ({
+                path: 'empty-module',
+                namespace: 'empty-ns'
+            }));
+
+            build.onLoad({ filter: /.*/, namespace: 'empty-ns' }, () => ({
+                contents: 'export default {};',
+                loader: 'js'
+            }));
+
+            // Handle .node files
+            build.onResolve({ filter: /\.node$/ }, () => ({
+                path: 'empty-module',
+                namespace: 'empty-ns'
+            }));
+
+            // Rewrite @ai16z/eliza imports
+            build.onResolve({ filter: /@ai16z\/eliza/ }, () => ({
+                path: '../core',
+                external: false
+            }));
+        }
+    }]
 });

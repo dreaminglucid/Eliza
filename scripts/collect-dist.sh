@@ -14,19 +14,36 @@ for package in packages/*/; do
         cp -r "$package/dist/"* "dist/$package_name/"
         
         # Find all JS files in the package's dist directory and fix imports
-        find "dist/$package_name" -type f -name "*.js" -exec sed -i'.bak' 's/@ai16z\/eliza/..\/core/g' {} +
+        find "dist/$package_name" -type f -name "*.js" -exec sed -i'.bak' \
+            -e 's/@ai16z\/eliza/..\/core/g' \
+            -e 's/from "node:path"/from "..\/polyfills\/path.js"/g' \
+            -e 's/from '\''node:path'\''/from '\''..\/polyfills\/path.js'\''/g' \
+            {} +
+            
         # Clean up backup files
         find "dist/$package_name" -name "*.bak" -delete
     fi
 done
+
+# Create polyfills directory and add path polyfill
+mkdir -p dist/polyfills
+cat > dist/polyfills/path.js << 'EOF'
+export const dirname = (path) => {
+    const parts = path.split('/');
+    parts.pop();
+    return parts.join('/');
+};
+export const resolve = (...paths) => paths.join('/').replace(/\/+/g, '/');
+export default { dirname, resolve };
+EOF
 
 # Create an index.js that exports all packages
 echo "Creating root index.js..."
 echo "// Auto-generated index file for Internet Computer deployment" > dist/index.js
 for package in dist/*/; do
     package_name=$(basename $package)
-    # Skip the core package in the exports if it exists
-    if [ "$package_name" != "core" ]; then
+    # Skip the core and polyfills packages in the exports
+    if [ "$package_name" != "core" ] && [ "$package_name" != "polyfills" ]; then
         echo "export * as $package_name from './$package_name';" >> dist/index.js
     fi
 done
