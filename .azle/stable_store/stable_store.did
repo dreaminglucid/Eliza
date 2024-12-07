@@ -1,0 +1,6 @@
+service: () -> {
+    getAgent: (text) -> (opt record {status:text; messages:vec text; config:record {}}) query;
+    getAgentCount: () -> (nat) query;
+    sendMessage: (text, text) -> (null);
+    setAgent: (text, record {}) -> (null);
+}

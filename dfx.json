@@ -1,39 +1,43 @@
 {
     "canisters": {
-        "agent_framework": {
-            "type": "azle",
-            "main": "ic/index.ts",
-            "custom": {
-                "experimental": true,
-                "candid_gen": "http",
-                "assets": [
-                    [
-                        "dist",
-                        "dist"
-                    ]
-                ],
-                "build_assets": "pnpm build:ic"
-            }
+      "stable_store": {
+        "type": "azle",
+        "main": "ic/stable_store.ts"
+      },
+      "agent_framework": {
+        "type": "azle",
+        "main": "ic/index.ts",
+        "custom": {
+          "experimental": true,
+          "candid_gen": "http",
+          "assets": [
+            ["dist", "dist"],
+            ["ic/stable_store.did", "stable_store.did"]
+          ],
+          "build_assets": "pnpm build:ic",
+          "env": ["STABLE_STORE_CANISTER_ID"]
         }
+      }
     },
     "defaults": {
-        "build": {
-            "args": "",
-            "packtool": ""
-        }
+      "build": {
+        "args": "",
+        "packtool": ""
+      }
     },
     "networks": {
-        "local": {
-            "bind": "127.0.0.1:8000",
-            "type": "ephemeral"
-        },
-        "ic": {
-            "providers": [
-                "https://mainnet.dfinity.network"
-            ],
-            "type": "persistent"
-        }
+      "local": {
+        "bind": "127.0.0.1:8000",
+        "type": "ephemeral"
+      },
+      "ic": {
+        "providers": [
+          "https://mainnet.dfinity.network"
+        ],
+        "type": "persistent"
+      }
     },
     "version": 1,
     "dfx": "0.21.0"
-}
+  }
+  

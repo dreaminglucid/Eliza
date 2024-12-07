@@ -1,0 +1,60 @@
+{
+  "name": "string",
+  "clients": [
+    "string"
+  ],
+  "modelProvider": "string",
+  "settings": {
+    "secrets": {},
+    "voice": {
+      "model": "string"
+    }
+  },
+  "people": [],
+  "plugins": [
+    {
+      "name": "string",
+      "description": "string"
+    }
+  ],
+  "system": "string",
+  "bio": [
+    "string"
+  ],
+  "lore": [
+    "string"
+  ],
+  "knowledge": [
+    "string"
+  ],
+  "messageExamples": [
+    [
+      {
+        "user": "string",
+        "content": {
+          "text": "string"
+        }
+      }
+    ]
+  ],
+  "postExamples": [
+    "string"
+  ],
+  "topics": [
+    "string"
+  ],
+  "style": {
+    "all": [
+      "string"
+    ],
+    "post": [
+      "string"
+    ],
+    "chat": [
+      "string"
+    ]
+  },
+  "adjectives": [
+    "string"
+  ]
+}

@@ -1,0 +1,929 @@
+Directory structure for: /ic-projects/DegenSpartanAI/eliza-ic/Eliza
+Generated on: 2024-12-07 10:51:57
+Excluded patterns: node_modules, docs, .turbo, .vscode, .azle, .dfx, .git
+==================================================
+
+./
+├── .editorconfig
+├── .env.example
+├── .eslintrc.json
+├── .gitignore
+├── .npmrc
+├── .nvmrc
+├── .prettierignore
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── README_CN.md
+├── README_ES.md
+├── README_FR.md
+├── README_IT.md
+├── README_JA.md
+├── README_KOR.md
+├── README_PTBR.md
+├── README_RU.md
+├── README_TR.md
+├── SECURITY.md
+├── agent_framework.wasm
+├── codecov.yml
+├── commitlint.config.js
+├── dfx.json
+├── directory_structure.txt
+├── docker-compose.yaml
+├── eslint.config.mjs
+├── generate_tree.py
+├── lerna.json
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── prettier.config.cjs
+├── renovate.json
+├── tsconfig.json
+├── turbo.json
+├── dist/
+│   ├── index.js
+│   ├── client-farcaster/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-trustdb/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-whatsapp/
+│   │   ├── client.d.ts
+│   │   ├── client.js
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── types.d.ts
+│   │   ├── types.js
+│   │   ├── handlers/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── message.handler.d.ts
+│   │   │   ├── message.handler.js
+│   │   │   ├── webhook.handler.d.ts
+│   │   │   └── webhook.handler.js
+│   │   ├── utils/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── validators.d.ts
+│   │   │   └── validators.js
+│   ├── plugin-solana/
+│   │   ├── chunk-VUNV25KB.js
+│   │   ├── chunk-VUNV25KB.js.map
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── index.js.map
+│   │   ├── lib-RTEYRPKK.js
+│   │   └── lib-RTEYRPKK.js.map
+│   ├── adapter-sqljs/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── create-eliza-app/
+│   │   ├── index.cjs
+│   │   └── index.mjs
+│   ├── client-direct/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-evm/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-starknet/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── client-telegram/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── adapter-supabase/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-0g/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-web-search/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-video-generation/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── adapter-sqlite/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-coinbase/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── adapter-postgres/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-node/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-bootstrap/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── core/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-icp/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-tee/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── client-discord/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── client-twitter/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-buttplug/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── client-github/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-conflux/
+│   │   ├── _esm-L4OBJJWB.js
+│   │   ├── _esm-L4OBJJWB.js.map
+│   │   ├── ccip-GDNGQWFM.js
+│   │   ├── ccip-GDNGQWFM.js.map
+│   │   ├── chunk-4LSI52JZ.js
+│   │   ├── chunk-4LSI52JZ.js.map
+│   │   ├── chunk-7ZSY24MT.js
+│   │   ├── chunk-7ZSY24MT.js.map
+│   │   ├── chunk-GAOJWDUZ.js
+│   │   ├── chunk-GAOJWDUZ.js.map
+│   │   ├── chunk-PR4QN5HX.js
+│   │   ├── chunk-PR4QN5HX.js.map
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── index.js.map
+│   │   ├── secp256k1-WTA463A3.js
+│   │   └── secp256k1-WTA463A3.js.map
+│   ├── client-auto/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+│   ├── plugin-image-generation/
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── index.js.map
+├── interfaces/
+├── client/
+│   ├── .gitignore
+│   ├── components.json
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   ├── dist/
+│   │   ├── index.html
+│   │   ├── vite.svg
+│   │   ├── assets/
+│   │   │   ├── index-C5G8T_UT.css
+│   │   │   └── index-CreDPyZs.js
+│   ├── src/
+│   │   ├── Agent.tsx
+│   │   ├── Agents.tsx
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── Character.tsx
+│   │   ├── Chat.tsx
+│   │   ├── Layout.tsx
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   ├── router.tsx
+│   │   ├── vite-env.d.ts
+│   │   ├── lib/
+│   │   │   └── utils.ts
+│   │   ├── hooks/
+│   │   │   └── use-mobile.tsx
+│   │   ├── components/
+│   │   │   ├── app-sidebar.tsx
+│   │   │   ├── ui/
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── separator.tsx
+│   │   │   │   ├── sheet.tsx
+│   │   │   │   ├── sidebar.tsx
+│   │   │   │   ├── skeleton.tsx
+│   │   │   │   └── tooltip.tsx
+│   │   ├── assets/
+│   │   │   └── react.svg
+│   ├── public/
+│   │   └── vite.svg
+├── packages/
+│   ├── client-farcaster/
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── actions.ts
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   ├── interactions.ts
+│   │   │   ├── memory.ts
+│   │   │   ├── post.ts
+│   │   │   ├── prompts.ts
+│   │   │   ├── types.ts
+│   │   │   └── utils.ts
+│   ├── plugin-trustdb/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── adapters/
+│   │   │   │   └── trustScoreDatabase.ts
+│   ├── plugin-whatsapp/
+│   │   ├── Readme.md
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── client.d.ts
+│   │   │   ├── client.js
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── types.d.ts
+│   │   │   ├── types.js
+│   │   │   ├── handlers/
+│   │   │   │   ├── index.d.ts
+│   │   │   │   ├── index.js
+│   │   │   │   ├── message.handler.d.ts
+│   │   │   │   ├── message.handler.js
+│   │   │   │   ├── webhook.handler.d.ts
+│   │   │   │   └── webhook.handler.js
+│   │   │   ├── utils/
+│   │   │   │   ├── index.d.ts
+│   │   │   │   ├── index.js
+│   │   │   │   ├── validators.d.ts
+│   │   │   │   └── validators.js
+│   │   ├── src/
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   ├── types.ts
+│   │   │   ├── handlers/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── message.handler.ts
+│   │   │   │   └── webhook.handler.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── index.ts
+│   │   │   │   └── validators.ts
+│   ├── plugin-solana/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── chunk-VUNV25KB.js
+│   │   │   ├── chunk-VUNV25KB.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── lib-RTEYRPKK.js
+│   │   │   └── lib-RTEYRPKK.js.map
+│   │   ├── src/
+│   │   │   ├── bignumber.ts
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── tests/
+│   │   │   │   └── token.test.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── pumpfun.ts
+│   │   │   │   ├── swap.ts
+│   │   │   │   ├── swapDao.ts
+│   │   │   │   ├── swapUtils.ts
+│   │   │   │   ├── takeOrder.ts
+│   │   │   │   └── transfer.ts
+│   │   │   ├── evaluators/
+│   │   │   │   └── trust.ts
+│   │   │   ├── types/
+│   │   │   │   └── token.ts
+│   │   │   ├── providers/
+│   │   │   │   ├── orderBook.ts
+│   │   │   │   ├── simulationSellingService.ts
+│   │   │   │   ├── token.ts
+│   │   │   │   ├── tokenUtils.ts
+│   │   │   │   ├── trustScoreProvider.ts
+│   │   │   │   └── wallet.ts
+│   ├── adapter-sqljs/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── sqliteTables.ts
+│   │   │   └── types.ts
+│   ├── create-eliza-app/
+│   │   ├── README.md
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── dist/
+│   │   │   ├── index.cjs
+│   │   │   └── index.mjs
+│   │   ├── src/
+│   │   │   └── index.ts
+│   │   ├── registry/
+│   │   │   └── eliza.json
+│   ├── client-direct/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── README.md
+│   │   │   ├── api.ts
+│   │   │   └── index.ts
+│   ├── plugin-evm/
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── bridge.ts
+│   │   │   │   ├── swap.ts
+│   │   │   │   └── transfer.ts
+│   │   │   ├── types/
+│   │   │   │   └── index.ts
+│   │   │   ├── providers/
+│   │   │   │   └── wallet.ts
+│   │   │   ├── templates/
+│   │   │   │   └── index.ts
+│   ├── plugin-starknet/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── readme.md
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── generate.ts
+│   │   │   │   ├── subdomain.ts
+│   │   │   │   ├── swap.ts
+│   │   │   │   ├── takeOrder.ts
+│   │   │   │   ├── transfer.ts
+│   │   │   │   └── unruggable.ts
+│   │   │   ├── types/
+│   │   │   │   ├── token.ts
+│   │   │   │   └── trustDB.ts
+│   │   │   ├── providers/
+│   │   │   │   ├── portfolioProvider.ts
+│   │   │   │   ├── token.ts
+│   │   │   │   ├── trustScoreProvider.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── ERC20Token.ts
+│   │   │   │   ├── cache.ts
+│   │   │   │   ├── constants.ts
+│   │   │   │   ├── erc20.json
+│   │   │   │   ├── index.ts
+│   │   │   │   └── starknetId.ts
+│   ├── client-telegram/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── messageManager.ts
+│   │   │   ├── telegramClient.ts
+│   │   │   ├── templates.ts
+│   │   │   ├── config/
+│   │   │   │   └── default.json5
+│   ├── adapter-supabase/
+│   │   ├── .npmignore
+│   │   ├── config.toml
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── schema.sql
+│   │   ├── seed.sql
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   └── index.ts
+│   ├── plugin-0g/
+│   │   ├── package.json
+│   │   ├── readme.md
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── actions/
+│   │   │   │   └── upload.ts
+│   │   │   ├── templates/
+│   │   │   │   └── upload.ts
+│   ├── plugin-web-search/
+│   │   ├── .npmignore
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   └── index.ts
+│   ├── plugin-video-generation/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── constants.ts
+│   │   │   └── index.ts
+│   ├── adapter-sqlite/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── sqliteTables.ts
+│   │   │   └── sqlite_vec.ts
+│   ├── plugin-coinbase/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── templates.ts
+│   │   │   ├── types.ts
+│   │   │   ├── utils.ts
+│   │   │   ├── plugins/
+│   │   │   │   ├── commerce.ts
+│   │   │   │   ├── massPayments.ts
+│   │   │   │   ├── trade.ts
+│   │   │   │   └── transactions.csv
+│   ├── adapter-postgres/
+│   │   ├── .npmignore
+│   │   ├── config.toml
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── schema.sql
+│   │   ├── seed.sql
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   └── index.ts
+│   │   ├── migrations/
+│   │   │   └── 20240318103238_remote_schema.sql
+│   ├── plugin-node/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── echogarden.d.ts
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── services/
+│   │   │   │   ├── audioUtils.ts
+│   │   │   │   ├── browser.ts
+│   │   │   │   ├── image.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── llama.ts
+│   │   │   │   ├── pdf.ts
+│   │   │   │   ├── speech.ts
+│   │   │   │   ├── transcription.ts
+│   │   │   │   └── video.ts
+│   │   │   ├── vendor/
+│   │   │   │   └── vitsVoiceList.ts
+│   │   ├── scripts/
+│   │   │   └── postinstall.js
+│   ├── plugin-bootstrap/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── continue.ts
+│   │   │   │   ├── followRoom.ts
+│   │   │   │   ├── ignore.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── muteRoom.ts
+│   │   │   │   ├── none.ts
+│   │   │   │   ├── unfollowRoom.ts
+│   │   │   │   └── unmuteRoom.ts
+│   │   │   ├── evaluators/
+│   │   │   │   ├── fact.ts
+│   │   │   │   ├── goal.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── providers/
+│   │   │   │   ├── boredom.ts
+│   │   │   │   ├── facts.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── time.ts
+│   ├── core/
+│   │   ├── .env.test
+│   │   ├── .gitignore
+│   │   ├── .npmignore
+│   │   ├── README-TESTS.md
+│   │   ├── elizaConfig.example.yaml
+│   │   ├── eslint.config.mjs
+│   │   ├── nodemon.json
+│   │   ├── package.json
+│   │   ├── renovate.json
+│   │   ├── tsconfig.build.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── vitest.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── actions.ts
+│   │   │   ├── cache.ts
+│   │   │   ├── config.ts
+│   │   │   ├── context.ts
+│   │   │   ├── database.ts
+│   │   │   ├── defaultCharacter.ts
+│   │   │   ├── embedding.ts
+│   │   │   ├── enviroment.ts
+│   │   │   ├── evaluators.ts
+│   │   │   ├── generation.ts
+│   │   │   ├── goals.ts
+│   │   │   ├── index.ts
+│   │   │   ├── knowledge.ts
+│   │   │   ├── logger.ts
+│   │   │   ├── memory.ts
+│   │   │   ├── messages.ts
+│   │   │   ├── models.ts
+│   │   │   ├── parsing.ts
+│   │   │   ├── posts.ts
+│   │   │   ├── providers.ts
+│   │   │   ├── relationships.ts
+│   │   │   ├── runtime.ts
+│   │   │   ├── settings.ts
+│   │   │   ├── types.ts
+│   │   │   ├── utils.ts
+│   │   │   ├── uuid.ts
+│   │   │   ├── tests/
+│   │   │   │   ├── actions.test.ts
+│   │   │   │   ├── cache.test.ts
+│   │   │   │   ├── database.test.ts
+│   │   │   │   ├── defaultCharacters.test.ts
+│   │   │   │   ├── env.test.ts
+│   │   │   │   ├── evaluators.test.ts
+│   │   │   │   ├── generation.test.ts
+│   │   │   │   ├── goals.test.ts
+│   │   │   │   ├── messages.test.ts
+│   │   │   │   ├── models.test.ts
+│   │   │   │   ├── posts.test.ts
+│   │   │   │   ├── providers.test.ts
+│   │   │   │   ├── relationships.test.ts
+│   │   │   │   └── videoGeneration.test.ts
+│   │   │   ├── test_resources/
+│   │   │   │   ├── constants.ts
+│   │   │   │   ├── createRuntime.ts
+│   │   │   │   ├── testSetup.ts
+│   │   │   │   └── types.ts
+│   │   ├── types/
+│   │   │   └── index.d.ts
+│   ├── plugin-icp/
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── types.ts
+│   │   │   ├── actions/
+│   │   │   │   └── createToken.ts
+│   │   │   ├── providers/
+│   │   │   │   └── wallet.ts
+│   │   │   ├── canisters/
+│   │   │   │   ├── pick-pump/
+│   │   │   │   │   ├── index.did.d.ts
+│   │   │   │   │   └── index.did.ts
+│   │   │   │   ├── token-icrc1/
+│   │   │   │   │   ├── index.did.d.ts
+│   │   │   │   │   └── index.did.ts
+│   │   │   ├── utils/
+│   │   │   │   ├── arrays.ts
+│   │   │   │   ├── hex.ts
+│   │   │   │   ├── number.ts
+│   │   │   │   ├── common/
+│   │   │   │   │   ├── types/
+│   │   │   │   │   │   ├── bigint.ts
+│   │   │   │   │   │   ├── options.ts
+│   │   │   │   │   │   ├── principal.ts
+│   │   │   │   │   │   ├── results.ts
+│   │   │   │   │   │   └── variant.ts
+│   │   │   │   │   ├── data/
+│   │   │   │   │   │   ├── json.ts
+│   │   │   │   │   │   ├── price.ts
+│   │   │   │   │   │   └── text.ts
+│   │   │   │   ├── ic/
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── principals.ts
+│   ├── plugin-tee/
+│   │   ├── .npmignore
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── types/
+│   │   │   │   └── tee.ts
+│   │   │   ├── providers/
+│   │   │   │   ├── deriveKeyProvider.ts
+│   │   │   │   ├── remoteAttestationProvider.ts
+│   │   │   │   └── walletProvider.ts
+│   ├── client-discord/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── attachments.ts
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── messages.ts
+│   │   │   ├── templates.ts
+│   │   │   ├── utils.ts
+│   │   │   ├── voice.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── chat_with_attachments.ts
+│   │   │   │   ├── download_media.ts
+│   │   │   │   ├── joinvoice.ts
+│   │   │   │   ├── leavevoice.ts
+│   │   │   │   ├── summarize_conversation.ts
+│   │   │   │   └── transcribe_media.ts
+│   │   │   ├── providers/
+│   │   │   │   ├── channelState.ts
+│   │   │   │   └── voiceState.ts
+│   ├── client-twitter/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── base.ts
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   ├── interactions.ts
+│   │   │   ├── post.ts
+│   │   │   ├── search.ts
+│   │   │   └── utils.ts
+│   ├── plugin-buttplug/
+│   │   ├── .npmignore
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── buttplug-user-device-config.json
+│   │   │   ├── enviroment.ts
+│   │   │   ├── index.ts
+│   │   │   └── utils.ts
+│   │   ├── test/
+│   │   │   ├── buttplug-user-device-config-test.json
+│   │   │   ├── fake-buttplug.ts
+│   │   │   └── simulate.ts
+│   │   ├── intiface-engine/
+│   │   │   ├── CHANGELOG.md
+│   │   │   ├── README.md
+│   │   │   └── intiface-engine
+│   ├── client-github/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── enviroment.ts
+│   │   │   └── index.ts
+│   ├── plugin-conflux/
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── _esm-L4OBJJWB.js
+│   │   │   ├── _esm-L4OBJJWB.js.map
+│   │   │   ├── ccip-GDNGQWFM.js
+│   │   │   ├── ccip-GDNGQWFM.js.map
+│   │   │   ├── chunk-4LSI52JZ.js
+│   │   │   ├── chunk-4LSI52JZ.js.map
+│   │   │   ├── chunk-7ZSY24MT.js
+│   │   │   ├── chunk-7ZSY24MT.js.map
+│   │   │   ├── chunk-GAOJWDUZ.js
+│   │   │   ├── chunk-GAOJWDUZ.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-WTA463A3.js
+│   │   │   └── secp256k1-WTA463A3.js.map
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── types.ts
+│   │   │   ├── actions/
+│   │   │   │   ├── bridgeTransfer.ts
+│   │   │   │   ├── confiPump.ts
+│   │   │   │   └── transfer.ts
+│   │   │   ├── abi/
+│   │   │   │   ├── crossSpaceCall.ts
+│   │   │   │   ├── erc20.ts
+│   │   │   │   └── meme.ts
+│   │   │   ├── templates/
+│   │   │   │   ├── bridgeTransfer.ts
+│   │   │   │   ├── confiPump.ts
+│   │   │   │   └── transfer.ts
+│   ├── client-auto/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   └── index.ts
+│   ├── plugin-image-generation/
+│   │   ├── .npmignore
+│   │   ├── eslint.config.mjs
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── tsup.config.ts
+│   │   ├── dist/
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
+│   │   ├── src/
+│   │   │   ├── enviroment.ts
+│   │   │   └── index.ts
+├── scripts/
+│   ├── build.sh
+│   ├── clean.sh
+│   ├── collect-dist.sh
+│   ├── derive-keys.js
+│   ├── dev.sh
+│   ├── docker.sh
+│   ├── extracttweets.js
+│   ├── gettweets.mjs
+│   ├── lint.sh
+│   ├── migrateCache.js
+│   ├── start.sh
+│   └── test.sh
+├── characters/
+│   ├── eternalai.character.json
+│   ├── tate.character.json
+│   └── trump.character.json
+├── agent/
+│   ├── .gitignore
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── src/
+│   │   └── index.ts
+├── ic/
+│   ├── canister_ids.json
+│   ├── cli.ts
+│   ├── index.ts
+│   ├── package.json
+│   ├── stable_store.ts
+│   ├── tsconfig.json
+│   └── tsup.config.ts
