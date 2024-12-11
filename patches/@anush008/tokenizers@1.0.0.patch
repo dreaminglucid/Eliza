@@ -1,0 +1,20 @@
+diff --git a/index.js b/index.js
+--- a/index.js
++++ b/index.js
+@@ -1,190 +1,15 @@
+ class Tokenizer {
+-    constructor() {
+-        // Original implementation
+-    }
+-
+-    encode(text) {
+-        return {
+-            ids: [],
+-            tokens: text.split(' '),
+-            attentionMask: []
+-        };
+-    }
++  encode(text) { return { ids: [], tokens: text.split(' '), attentionMask: [] }; }
++  decode() { return ''; }
+ }
++module.exports = { Tokenizer };

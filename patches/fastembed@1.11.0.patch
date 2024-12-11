@@ -1,0 +1,55 @@
+// patches/fastembed@1.11.0.patch
+diff --git a/lib/esm/fastembed.js b/lib/esm/fastembed.js
+index 1234567..abcdef0 100644
+--- a/lib/esm/fastembed.js
++++ b/lib/esm/fastembed.js
+@@ -1,108 +1,37 @@
+-import https from 'https';
+-import { createHash } from 'crypto';
+-import { promises as fs } from 'fs';
+-import path from 'path';
+-import { fileURLToPath } from 'url';
+-import * as ort from 'onnxruntime-node';
++class FastEmbedClient {
++    constructor(options = {}) {
++        console.warn('Using IC-compatible FastEmbed shim');
++        this.options = options;
++    }
+
+-export class FastEmbedClient {
+-    // Original implementation...
++    async embed(texts) {
++        if (!Array.isArray(texts)) {
++            texts = [texts];
++        }
++        return texts.map(() => new Float32Array(384).fill(0));
++    }
++
++    async close() {
++        return Promise.resolve();
++    }
+ }
+
+-// Original exports...
++export { FastEmbedClient };
++export default { FastEmbedClient };
+
+diff --git a/lib/cjs/fastembed.js b/lib/cjs/fastembed.js
+index 1234567..abcdef0 100644
+--- a/lib/cjs/fastembed.js
++++ b/lib/cjs/fastembed.js
+@@ -1,108 +1,37 @@
+-const https = require('https');
+-const crypto = require('crypto');
+-const fs = require('fs').promises;
+-const path = require('path');
+-const ort = require('onnxruntime-node');
++"use strict";
+
+-class FastEmbedClient {
+-    // Original implementation...
+-}
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.FastEmbedClient = void 0;
+
+-module.exports = { FastEmbedClient };

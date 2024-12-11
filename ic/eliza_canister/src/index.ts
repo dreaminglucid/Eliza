@@ -1,4 +1,4 @@
-// ic/src/index.ts
+// ic/eliza_canister/src/index.ts
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -6,9 +6,9 @@ dotenv.config();
 import { Server, serialize } from 'azle/experimental';
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
-import beffCharacter from './characters/beff.json';
-import { Character, CharacterSchema } from './types'; // Import Character and schema
-import { DirectClient } from './dist/client-direct';
+import beffCharacter from '../characters/beff.json';
+import { Character, CharacterSchema } from './types';
+import { DirectClient } from '../dist/client-direct';
 import { 
     AgentRuntime, 
     CacheManager, 
@@ -17,7 +17,8 @@ import {
     generateText, 
     Memory, 
     State 
-} from './dist/core'; // Import concrete PostgresDatabaseAdapter and other types
+} from '../dist/core';
+import { InMemoryDatabaseAdapter } from './memoryAdapter';
 
 // Replace with actual deployed stable_store canister ID
 const STABLE_STORE_CANISTER_ID = process.env.STABLE_STORE_CANISTER_ID || "bkyz2-fmaaa-aaaaa-qaaaq-cai";
@@ -31,6 +32,7 @@ const PLUGIN_MAP: Record<string, any> = {
 };
 
 // Initialize required components
+const databaseAdapter = new InMemoryDatabaseAdapter();
 const cacheManager = new CacheManager(new MemoryCacheAdapter());
 
 // AgentRuntime instances mapped by character name
@@ -61,15 +63,12 @@ async function initCharacters() {
         modelProvider: characterData.modelProvider as ModelProviderName, // Enum value from parsed data
         services: [], // Populate as needed
         managers: [], // Populate as needed
-        databaseAdapter: databaseAdapter, // Use the concrete PostgresDatabaseAdapter
+        databaseAdapter: databaseAdapter, // Using our in-memory adapter
         fetch: fetch, // Or your custom fetch implementation
         speechModelPath: process.env.SPEECH_MODEL_PATH || "path/to/speech-model", // Use environment variables
         cacheManager: cacheManager,
         logging: true // Set to false in production if needed
     });
-
-    // Initialize the database connection
-    await databaseAdapter.init();
 
     // Initialize the runtime
     await runtime.initialize();
@@ -89,7 +88,6 @@ async function setAgent(name: string, config: Record<string, any>): Promise<void
     if (!response.ok) {
         throw new Error(`Failed to setAgent: ${name}`);
     }
-    // No return value to process
 }
 
 async function sendMessage(name: string, message: string): Promise<void> {
@@ -102,7 +100,6 @@ async function sendMessage(name: string, message: string): Promise<void> {
     if (!response.ok) {
         throw new Error(`Failed to sendMessage to: ${name}`);
     }
-    // No return value to process
 }
 
 type AgentData = { config: Record<string, any>; status: string; messages: string[] };

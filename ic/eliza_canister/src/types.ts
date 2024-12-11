@@ -1,7 +1,6 @@
 // ic/src/types.ts
-
 import { z } from 'zod';
-import { ModelProviderName, Clients } from './dist/core'; // Adjust the path as needed
+import { ModelProviderName, Clients } from '../dist/core'; // Adjust the path as needed
 
 // Define a Zod native enum schema based on ModelProviderName
 const ModelProviderSchema = z.nativeEnum(ModelProviderName);
@@ -9,8 +8,8 @@ const ModelProviderSchema = z.nativeEnum(ModelProviderName);
 // Define a Zod native enum schema based on Clients
 const ClientsSchema = z.nativeEnum(Clients);
 
-// Define the UUID type as a template literal type
-type UUID = `${string}-${string}-${string}-${string}-${string}`;
+// Define and export the UUID type as a template literal type
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 // Define the UUID regex pattern
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

@@ -46,5 +46,8 @@ packages/plugin-coinbase/package-lock.json
 
 .turbo
 
-dist/
+ic/eliza_canister/dist/
+ic/eliza_canister/output/
+ic/eliza_canister/characters/beff.json
 .dfx/
+.azle/
