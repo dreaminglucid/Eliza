@@ -49,5 +49,6 @@ packages/plugin-coinbase/package-lock.json
 ic/eliza_canister/dist/
 ic/eliza_canister/output/
 ic/eliza_canister/characters/beff.json
+scripts/script-outputs/
 .dfx/
 .azle/
