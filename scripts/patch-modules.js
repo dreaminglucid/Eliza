@@ -1,5 +1,4 @@
 // scripts/patch-modules.js
-
 const fs = require('fs');
 const path = require('path');
 
@@ -145,42 +144,85 @@ const MODULES_TO_PATCH = [
     }
 ];
 
-// Define the shims directory inside ic/eliza_canister/build/shims
-const SHIMS_DIR = path.join(process.cwd(), 'ic', 'eliza_canister', 'build', 'shims');
+// Mock mappings for handling native modules and shims
+const MOCK_MAPPINGS = {
+    'default': `
+        export class FastEmbedClient {
+            constructor() {
+                console.warn('Using default FastEmbedClient shim');
+            }
+            async embed(texts) { return []; }
+            async close() {}
+        }
+        export class EmbeddingModel {}
+        export class ExecutionProvider {}
+        export class FlagEmbedding {}
+        export default { FastEmbedClient, EmbeddingModel, ExecutionProvider, FlagEmbedding };
+    `
+};
 
-if (!fs.existsSync(SHIMS_DIR)) {
-    fs.mkdirSync(SHIMS_DIR, { recursive: true });
-    console.log(`Created shims directory at "${SHIMS_DIR}".`);
+// Function to find all instances of a module within node_modules
+function findAllModulePaths(moduleName, startPath) {
+    const results = [];
+    function search(dir) {
+        const moduleDir = path.join(dir, 'node_modules', moduleName);
+        if (fs.existsSync(moduleDir)) {
+            results.push(moduleDir);
+        }
+        const subdirs = fs.readdirSync(dir).filter(sub => sub === 'node_modules');
+        subdirs.forEach(subdir => {
+            search(path.join(dir, subdir));
+        });
+    }
+    search(startPath);
+    return results;
 }
 
-// Function to patch a single module by writing shims into SHIMS_DIR
-function patchModule(moduleInfo) {
+// Function to patch a single module
+function patchModule(moduleInfo, modulePath) {
     const { name, paths } = moduleInfo;
-    const shimsModuleDir = path.join(SHIMS_DIR, name);
-    
+
+    if (!fs.existsSync(modulePath)) {
+        console.log(`Module "${name}" not found at "${modulePath}" - skipping.`);
+        return;
+    }
+
     Object.entries(paths).forEach(([filePath, content]) => {
-        const fullPath = path.join(shimsModuleDir, filePath);
+        const fullPath = path.join(modulePath, filePath);
         const dirName = path.dirname(fullPath);
         if (!fs.existsSync(dirName)) {
             fs.mkdirSync(dirName, { recursive: true });
             console.log(`Created directory: ${dirName}`);
         }
         fs.writeFileSync(fullPath, content);
-        console.log(`Created shim for "${name}" at "${fullPath}".`);
+        console.log(`Patched "${name}" at "${filePath}" in "${modulePath}".`);
+    });
+
+    // Handle any .node files by removing or replacing them
+    removeNodeFiles(modulePath);
+}
+
+// Function to remove .node files within a directory
+function removeNodeFiles(dir) {
+    if (!fs.existsSync(dir)) return;
+
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+        const fullPath = path.join(dir, file);
+        const stat = fs.statSync(fullPath);
+
+        if (stat.isDirectory()) {
+            removeNodeFiles(fullPath);
+        } else if (file.endsWith('.node')) {
+            fs.writeFileSync(fullPath, '// IC-compatible empty module');
+            console.log(`Removed or replaced .node file: ${fullPath}`);
+        }
     });
 }
 
-// Function to remove .node files within node_modules is no longer needed
-// So, remove the call to removeNodeFiles
-// Function to update package.json is likely not needed anymore, but kept if necessary
-
-// Alternatively, may need to adjust `azle.config.js` to use shims from SHIMS_DIR
-
-// Function to update package.json to mark certain modules as browser-compatible if needed
-function updatePackageJson(name) {
-    // Potentially no longer needed, as shims are not in node_modules
-    // So, may skip or keep for other modules
-    const pkgPath = path.join(process.cwd(), 'node_modules', name, 'package.json');
+// Function to update package.json to mark certain modules as browser-compatible
+function updatePackageJson(name, modulePath) {
+    const pkgPath = path.join(modulePath, 'package.json');
     if (fs.existsSync(pkgPath)) {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
         pkg.browser = {
@@ -192,17 +234,27 @@ function updatePackageJson(name) {
             'url': false
         };
         fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-        console.log(`Updated package.json for "${name}" to mark modules as browser-compatible.`);
+        console.log(`Updated package.json for "${name}" at "${modulePath}" to mark modules as browser-compatible.`);
     }
 }
 
-// Apply patches to all specified modules
+// Apply patches to all specified modules, including nested instances
 function applyPatches() {
     console.log('Starting module patching...');
+
+    const startPath = process.cwd();
     MODULES_TO_PATCH.forEach(module => {
-        patchModule(module);
-        // updatePackageJson(module.name); // Possibly skip, as shims are now in shims directory
+        const modulePaths = findAllModulePaths(module.name, startPath);
+        if (modulePaths.length === 0) {
+            console.log(`Module "${module.name}" not found in any node_modules - skipping.`);
+            return;
+        }
+        modulePaths.forEach(modulePath => {
+            patchModule(module, modulePath);
+            updatePackageJson(module.name, modulePath);
+        });
     });
+
     console.log('Module patching complete.');
 }
 

@@ -3,7 +3,30 @@
 const esbuild = require('esbuild');
 const path = require('path');
 const fs = require('fs');
-const { MOCK_MAPPINGS, createModuleShim } = require('./build/handlers');
+
+// Since MOCK_MAPPINGS and createModuleShim were referenced, ensure they're defined or adjust accordingly.
+// For simplicity, we'll assume MOCK_MAPPINGS has a 'default' key as in the patch-modules.js
+
+const MOCK_MAPPINGS = {
+    'default': `
+        export class FastEmbedClient {
+            constructor() {
+                console.warn('Using default FastEmbedClient shim');
+            }
+            async embed(texts) { return []; }
+            async close() {}
+        }
+        export class EmbeddingModel {}
+        export class ExecutionProvider {}
+        export class FlagEmbedding {}
+        export default { FastEmbedClient, EmbeddingModel, ExecutionProvider, FlagEmbedding };
+    `
+};
+
+// If createModuleShim is needed, define a simple version
+function createModuleShim(name) {
+    return MOCK_MAPPINGS[name] || MOCK_MAPPINGS['default'];
+}
 
 const nodeBinaryPlugin = {
   name: 'node-binary-resolver',
