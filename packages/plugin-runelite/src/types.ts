@@ -45,6 +45,7 @@ export const GameActionSchema = z.object({
         "INTERACT_PLAYER",
         "USE_ITEM",
         "CHAT_MESSAGE",
+        "EMOTE",
     ]),
     params: z.record(z.string(), z.any()).default({}),
 });

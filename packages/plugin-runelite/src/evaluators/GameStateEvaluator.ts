@@ -12,7 +12,7 @@ import {
  *  - Are there players nearby?
  *  - Is there recent chat?
  *  - Are there interesting objects?
- *  This might affect how the LLM decides to respond.
+ *  - Possibly: should we do an emote?
  */
 export const GameStateEvaluator: Evaluator = {
     name: "gameStateEvaluator",
@@ -23,7 +23,7 @@ export const GameStateEvaluator: Evaluator = {
 
     handler: async (runtime: IAgentRuntime, memory: Memory, state: State) => {
         try {
-            // The system automatically sets state.worldState from the provider
+            // The system automatically sets state.worldState from our provider
             const worldState = state.worldState as {
                 nearbyPlayers: unknown[];
                 chatHistory: { timestamp: number }[];
@@ -34,6 +34,7 @@ export const GameStateEvaluator: Evaluator = {
                 return {
                     score: 0,
                     reason: "No world state available",
+                    shouldEmote: false,
                 };
             }
 
@@ -41,13 +42,15 @@ export const GameStateEvaluator: Evaluator = {
             const reasons: string[] = [];
 
             // #1: If players are nearby
-            if (worldState.nearbyPlayers.length > 0) {
+            const playerCount = worldState.nearbyPlayers.length;
+            if (playerCount > 0) {
                 score += 0.3;
                 reasons.push("players nearby");
             }
 
             // #2: Check for recent chat activity in the last 30 seconds
-            const thirtySecAgo = Date.now() - 30_000;
+            const now = Date.now();
+            const thirtySecAgo = now - 30_000;
             const recentMessages = worldState.chatHistory.filter(
                 (msg) => msg.timestamp >= thirtySecAgo
             );
@@ -65,15 +68,29 @@ export const GameStateEvaluator: Evaluator = {
                 reasons.push("objects nearby");
             }
 
+            // Summarize “interest”
+            const finalScore = Math.min(1, score);
+            const reasonSummary = reasons.length
+                ? reasons.join(", ")
+                : "no interesting features";
+
+            // Possibly decide to emote if we see multiple players or if there's chat
+            let shouldEmote = false;
+            if (playerCount > 2 || recentMessages.length > 1) {
+                shouldEmote = true;
+            }
+
             return {
-                score: Math.min(1, score),
-                reason: reasons.join(", ") || "no interesting features",
+                score: finalScore, // 0..1 scale of how interesting the state is
+                reason: reasonSummary, // textual explanation
+                shouldEmote, // might help the AI decide to produce an emote word
             };
         } catch (error) {
             elizaLogger.error("Error in gameStateEvaluator:", error);
             return {
                 score: 0,
                 reason: `Evaluation failed: ${String(error)}`,
+                shouldEmote: false,
             };
         }
     },

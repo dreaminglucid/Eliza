@@ -1,23 +1,22 @@
-// src/plugins/RunescapeAgentPlugin.ts
 import { Plugin } from "@elizaos/core";
 import { WorldStateProvider } from "../providers/WorldStateProvider";
 import { GameActionHandler } from "../actions/GameActionHandler";
 import { GameStateEvaluator } from "../evaluators/GameStateEvaluator";
+import { EmoteAction } from "../actions/EmoteAction";
 
 /**
  * A plugin that wires up:
  *  - A provider (WorldStateProvider),
- *  - An action (GameActionHandler),
+ *  - Some actions (GameActionHandler, EmoteAction),
  *  - An evaluator (GameStateEvaluator).
- *
- * According to Eliza plugin docs, we create an object implementing the Plugin interface.
  */
 export const RunescapeAgentPlugin: Plugin = {
     name: "plugin-runelite",
     description: "RuneScape game interaction plugin for Eliza OS",
 
-    // The plugin can register multiple arrays:
-    actions: [GameActionHandler],
+    // Include BOTH your normal game actions AND the new EmoteAction
+    actions: [GameActionHandler, EmoteAction],
+
     providers: [new WorldStateProvider()],
     evaluators: [GameStateEvaluator],
     services: [],

@@ -1,3 +1,4 @@
+// src/providers/WorldStateProvider.ts
 import {
     Provider,
     IAgentRuntime,
@@ -8,14 +9,15 @@ import {
 import { WorldState } from "../types";
 
 /**
- * WorldStateProvider fetches state from RuneLite plugin endpoint
+ * Fetches the world state from your existing RuneLite /world-state endpoint.
+ * (unchanged from your sample, just included for completeness)
  */
 export class WorldStateProvider implements Provider {
     private lastState: WorldState | null = null;
     private lastFetchTime = 0;
     private updateInterval = 1000; // 1 second caching
     private endpointUrl =
-        "https://f2e6-67-252-4-136.ngrok-free.app/world-state"; // RuneLite plugin endpoint
+        "https://f2e6-67-252-4-136.ngrok-free.app/world-state"; // or wherever your /world-state is served
 
     async get(
         _runtime: IAgentRuntime,
@@ -58,7 +60,6 @@ export class WorldStateProvider implements Provider {
     }
 
     private transformState(data: any, message: Memory): WorldState {
-        // Transform the RuneLite plugin state into our WorldState format
         return {
             currentPlayer: {
                 name:
@@ -84,11 +85,12 @@ export class WorldStateProvider implements Provider {
                 inventory: data.currentPlayer?.inventory || [],
             },
             nearbyPlayers: data.currentPlayer?.location?.nearbyPlayers || [],
-            nearbyObjects: [], // Not implemented yet in plugin
-            chatHistory: [], // Handled separately by message system
+            nearbyObjects: [], // Not implemented yet
+            chatHistory: [], // You could fill this from data if your plugin does that
             timestamp: Date.now(),
         };
     }
+
     private fallbackState(message: Memory): WorldState {
         elizaLogger.log(
             "WorldStateProvider => Using fallback state from message"
