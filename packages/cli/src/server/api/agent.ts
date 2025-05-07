@@ -1482,6 +1482,78 @@ export function agentRouter(
       return;
     }
 
+    // Extract scope from query parameters
+    const entityId = req.query.entityId as UUID | undefined;
+    const worldId = req.query.worldId as UUID | undefined;
+
+    // Ensure the entity associated with the knowledge exists before proceeding
+    if (entityId) {
+      try {
+        let userEntity = await runtime.getEntityById(entityId);
+        if (!userEntity) {
+          logger.info(
+            `[KNOWLEDGE POST] Entity ${entityId} not found. Creating now. WorldID: ${worldId}, AgentID: ${agentId}`
+          );
+          await runtime.createEntity({
+            id: entityId,
+            agentId: agentId, // Associate with the current agent
+            names: [entityId.toString()], // Provide a default names array
+          });
+          userEntity = await runtime.getEntityById(entityId); // Re-fetch
+          if (!userEntity) {
+            throw new Error(`Failed to create or find entity ${entityId} after creation attempt.`);
+          }
+        }
+      } catch (error) {
+        logger.error(`[KNOWLEDGE POST] Error ensuring entity ${entityId} exists:`, error);
+        res.status(500).json({
+          success: false,
+          error: {
+            code: 'ENTITY_CHECK_ERROR',
+            message: 'Error verifying or creating entity for knowledge upload',
+            details: error.message,
+          },
+        });
+        return; // Stop processing if we can't ensure the entity exists
+      }
+    } else {
+      logger.warn(
+        `[KNOWLEDGE POST] No valid entityId provided in query for agent ${agentId}. Knowledge will be scoped to agent or default.`
+      );
+    }
+
+    // --- ADDED: Ensure World Exists ---
+    let effectiveWorldId: UUID;
+    if (worldId) {
+      const existingWorld = await runtime.getWorld(worldId);
+      if (existingWorld) {
+        effectiveWorldId = worldId;
+        logger.info(`[KNOWLEDGE POST] Using existing worldId from query: ${effectiveWorldId}`);
+      } else {
+        // worldId from query was valid UUID but didn't exist, so create it.
+        effectiveWorldId = worldId;
+        logger.info(`[KNOWLEDGE POST] worldId from query (${worldId}) not found. Will create it.`);
+      }
+    } else {
+      // No valid worldId from query, use agentId as default world.
+      effectiveWorldId = agentId;
+      logger.info(
+        `[KNOWLEDGE POST] No valid worldId in query. Using agentId as default worldId: ${effectiveWorldId}`
+      );
+    }
+
+    // Ensure this world (either from query or default) exists.
+    // If it's a new world based on agentId, it will be created here.
+    // If it was a valid worldId from query that didn't exist, it will be created here.
+    await runtime.ensureWorldExists({
+      id: effectiveWorldId,
+      name: `World for ${effectiveWorldId}`, // Generic name
+      agentId: agentId,
+      serverId: effectiveWorldId.toString(), // Provide a serverId
+    });
+    logger.info(`[KNOWLEDGE POST] Ensured world exists: ${effectiveWorldId}`);
+    // --- END ADDED ---
+
     try {
       const results = [];
 
@@ -1518,12 +1590,16 @@ export function agentRouter(
             },
           };
 
-          // Add knowledge to agent
-          await runtime.addKnowledge(knowledgeItem, {
-            targetTokens: 1500,
-            overlap: 200,
-            modelContextSize: 4096,
-          });
+          // Add knowledge to agent, including the scope
+          await runtime.addKnowledge(
+            knowledgeItem,
+            undefined, // Default processing options
+            {
+              roomId: undefined,
+              worldId: effectiveWorldId, // Use the ensured effectiveWorldId
+              entityId: entityId,
+            }
+          );
 
           // Clean up temp file immediately after successful processing
           if (file.path && fs.existsSync(file.path)) {

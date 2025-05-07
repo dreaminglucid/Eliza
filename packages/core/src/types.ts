@@ -713,8 +713,6 @@ export interface IDatabaseAdapter {
 
   ensureAgentExists(agent: Partial<Agent>): Promise<Agent>;
 
-  ensureEmbeddingDimension(dimension: number): Promise<void>;
-
   /** Get entity by ID */
   getEntityById(entityId: UUID): Promise<Entity | null>;
 
@@ -891,8 +889,6 @@ export interface IDatabaseAdapter {
    * @returns Promise resolving to an array of Relationship objects
    */
   getRelationships(params: { entityId: UUID; tags?: string[] }): Promise<Relationship[]>;
-
-  ensureEmbeddingDimension(dimension: number): Promise<void>;
 
   getCache<T>(key: string): Promise<T | undefined>;
   setCache<T>(key: string, value: T): Promise<boolean>;

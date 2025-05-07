@@ -632,10 +632,8 @@ export class AgentRuntime implements IAgentRuntime {
           `[AgentRuntime][${this.character.name}] No TEXT_EMBEDDING model registered. Skipping embedding dimension setup.`
         );
       } else {
-        // Only run ensureEmbeddingDimension if we have an embedding model
-        span.addEvent('setting_up_embedding_dimension');
-        await this.ensureEmbeddingDimension();
-        span.addEvent('embedding_dimension_setup_complete');
+        // Dimension is now set during adapter init, no need to check here
+        span.addEvent('skipping_dimension_check_in_runtime_init');
       }
 
       // Process character knowledge
@@ -663,6 +661,8 @@ export class AgentRuntime implements IAgentRuntime {
       }
 
       span.addEvent('initialization_completed');
+      this.isInitialized = true;
+      logger.info(`[AgentRuntime][${this.character.name}] Initialization complete`);
     });
   }
 
@@ -1620,6 +1620,11 @@ export class AgentRuntime implements IAgentRuntime {
       // Fetch data from selected providers
       const providerData = await Promise.all(
         providersToGet.map(async (provider) => {
+          // --- ADDED LOG ---
+          logger.info(
+            `[ComposeState] Calling provider: ${provider.name} with entityId: ${message.entityId}`
+          );
+          // -----------------
           // This creates nested spans for each provider call automatically
           return this.startSpan(`provider.${provider.name}`, async (providerSpan) => {
             const start = Date.now();
@@ -2029,6 +2034,32 @@ export class AgentRuntime implements IAgentRuntime {
           rootSpan.addEvent('processing_started');
           // Execute handlers within the new context
           await context.with(spanContext, async () => {
+            // --- REFINED LOGGING V2 ---
+            const verboseEventTypes = [
+              EventType.MESSAGE_RECEIVED,
+              EventType.WORLD_JOINED,
+              EventType.WORLD_CONNECTED,
+              EventType.ENTITY_JOINED,
+              EventType.ENTITY_LEFT,
+              EventType.RUN_STARTED, // Assuming RUN_STARTED, RUN_ENDED, RUN_TIMEOUT are part of EventType
+              EventType.RUN_ENDED,
+              EventType.RUN_TIMEOUT,
+            ];
+
+            if (verboseEventTypes.includes(eventName as EventType)) {
+              let logDetails = `[EmitEvent] ${eventName}:`;
+              if (params.message?.id) logDetails += ` eventId=${params.message.id}`;
+              if (params.message?.entityId) logDetails += `, entityId=${params.message.entityId}`;
+              if (params.message?.roomId) logDetails += `, roomId=${params.message.roomId}`;
+              if (params.world?.id) logDetails += `, worldId=${params.world.id}`;
+              if (params.entityId) logDetails += `, entityId=${params.entityId}`; // For EntityPayload
+              if (params.runId) logDetails += `, runId=${params.runId}`; // For Run events
+              logger.info(logDetails);
+            } else {
+              // For other events, log the params object
+              logger.info({ paramsInsideEmit: params }, `[EmitEvent] Params for ${eventName}`);
+            }
+            // -------------------------
             await Promise.all(
               eventHandlers.map((handler) => {
                 // Explicitly capture the active context for each handler
@@ -2054,6 +2085,35 @@ export class AgentRuntime implements IAgentRuntime {
       } else {
         // --- No Instrumentation: Execute directly ---
         try {
+          // --- REFINED LOGGING V2 ---
+          const verboseEventTypes = [
+            EventType.MESSAGE_RECEIVED,
+            EventType.WORLD_JOINED,
+            EventType.WORLD_CONNECTED,
+            EventType.ENTITY_JOINED,
+            EventType.ENTITY_LEFT,
+            EventType.RUN_STARTED,
+            EventType.RUN_ENDED,
+            EventType.RUN_TIMEOUT,
+          ];
+
+          if (verboseEventTypes.includes(eventName as EventType)) {
+            let logDetails = `[EmitEvent] ${eventName} (non-instrumented):`;
+            if (params.message?.id) logDetails += ` eventId=${params.message.id}`;
+            if (params.message?.entityId) logDetails += `, entityId=${params.message.entityId}`;
+            if (params.message?.roomId) logDetails += `, roomId=${params.message.roomId}`;
+            if (params.world?.id) logDetails += `, worldId=${params.world.id}`;
+            if (params.entityId) logDetails += `, entityId=${params.entityId}`; // For EntityPayload
+            if (params.runId) logDetails += `, runId=${params.runId}`; // For Run events
+            logger.info(logDetails);
+          } else {
+            // For other events, log the params object
+            logger.info(
+              { paramsInsideEmit: params },
+              `[EmitEvent] Params for ${eventName} (non-instrumented)`
+            );
+          }
+          // ------------------------------------
           await Promise.all(eventHandlers.map((handler) => handler(params)));
         } catch (error) {
           this.runtimeLogger.error(
@@ -2097,7 +2157,7 @@ export class AgentRuntime implements IAgentRuntime {
       this.runtimeLogger.debug(
         `[AgentRuntime][${this.character.name}] Setting embedding dimension: ${embedding.length}`
       );
-      await this.adapter.ensureEmbeddingDimension(embedding.length);
+      // await this.adapter.ensureEmbeddingDimension(embedding.length);
       this.runtimeLogger.debug(
         `[AgentRuntime][${this.character.name}] Successfully set embedding dimension`
       );
@@ -2112,9 +2172,7 @@ export class AgentRuntime implements IAgentRuntime {
 
   registerTaskWorker(taskHandler: TaskWorker): void {
     if (this.taskWorkers.has(taskHandler.name)) {
-      this.runtimeLogger.warn(
-        `Task definition ${taskHandler.name} already registered. Will be overwritten.`
-      );
+      logger.warn(`TaskWorker already registered: ${taskHandler.name}`);
     }
     this.taskWorkers.set(taskHandler.name, taskHandler);
   }

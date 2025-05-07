@@ -9,18 +9,18 @@ import type { PostgresConnectionManager } from './manager';
  * Extends BaseDrizzleAdapter<NodePgDatabase>.
  */
 export class PgDatabaseAdapter extends BaseDrizzleAdapter<NodePgDatabase> {
-  protected embeddingDimension: EmbeddingDimensionColumn = DIMENSION_MAP[384];
-
   /**
    * Constructor for creating a new instance of a class.
    * @param {UUID} agentId - The unique identifier for the agent.
    * @param {PostgresConnectionManager} manager - The Postgres connection manager for the instance.
+   * @param {number} [embeddingDimensionValue=1536] - The embedding dimension to use.
    */
   constructor(
     agentId: UUID,
-    private manager: PostgresConnectionManager
+    private manager: PostgresConnectionManager,
+    embeddingDimensionValue: number = 1536
   ) {
-    super(agentId);
+    super(agentId, embeddingDimensionValue);
     this.manager = manager;
   }
 

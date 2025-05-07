@@ -63,13 +63,21 @@ export function createDatabaseAdapter(
     config.dataDir = expandTildePath(config.dataDir);
   }
 
+  // Determine the embedding dimension (defaulting to 1536)
+  // TODO: Ideally, this should come from agent settings or a more central config
+  const embeddingDimensionValue = 1536;
+
   if (config.postgresUrl) {
     if (!globalSingletons.postgresConnectionManager) {
       globalSingletons.postgresConnectionManager = new PostgresConnectionManager(
         config.postgresUrl
       );
     }
-    return new PgDatabaseAdapter(agentId, globalSingletons.postgresConnectionManager);
+    return new PgDatabaseAdapter(
+      agentId,
+      globalSingletons.postgresConnectionManager,
+      embeddingDimensionValue
+    );
   }
 
   const dataDir = config.dataDir ?? './elizadb';
@@ -78,7 +86,11 @@ export function createDatabaseAdapter(
     globalSingletons.pgLiteClientManager = new PGliteClientManager({ dataDir });
   }
 
-  return new PgliteDatabaseAdapter(agentId, globalSingletons.pgLiteClientManager);
+  return new PgliteDatabaseAdapter(
+    agentId,
+    globalSingletons.pgLiteClientManager,
+    embeddingDimensionValue
+  );
 }
 
 /**

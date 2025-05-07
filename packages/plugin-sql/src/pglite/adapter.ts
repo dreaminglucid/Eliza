@@ -24,15 +24,15 @@ import type { PGliteClientManager } from './manager';
  */
 export class PgliteDatabaseAdapter extends BaseDrizzleAdapter<PgliteDatabase> {
   private manager: PGliteClientManager;
-  protected embeddingDimension: EmbeddingDimensionColumn = DIMENSION_MAP[384];
 
   /**
    * Constructor for creating an instance of a class.
    * @param {UUID} agentId - The unique identifier for the agent.
    * @param {PGliteClientManager} manager - The manager for the PGlite client.
+   * @param {number} [embeddingDimensionValue=1536] - The embedding dimension to use.
    */
-  constructor(agentId: UUID, manager: PGliteClientManager) {
-    super(agentId);
+  constructor(agentId: UUID, manager: PGliteClientManager, embeddingDimensionValue: number = 1536) {
+    super(agentId, embeddingDimensionValue);
     this.manager = manager;
     this.db = drizzle(this.manager.getConnection());
   }

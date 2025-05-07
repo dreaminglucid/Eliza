@@ -146,6 +146,10 @@ const messageReceivedHandler = async ({
   callback,
   onComplete,
 }: MessageReceivedHandlerParams): Promise<void> => {
+  logger.info(
+    `[Bootstrap Handler] Received message event. Message ID: ${message?.id}, Entity ID: ${message?.entityId}, Room ID: ${message?.roomId}`
+  );
+
   // Generate a new response ID
   const responseId = v4();
   // Get or create the agent-specific map
@@ -927,6 +931,10 @@ const controlMessageHandler = async ({
 const events = {
   [EventType.MESSAGE_RECEIVED]: [
     async (payload: MessagePayload) => {
+      // Ensure this specific line is commented out to prevent logging the full payload:
+      // logger.info({ rawEventPayload: payload }, `[Bootstrap Handler] Received raw event payload:`);
+
+      // Original handler call
       await messageReceivedHandler({
         runtime: payload.runtime,
         message: payload.message,

@@ -81,7 +81,8 @@ export abstract class BaseDrizzleAdapter<
   protected readonly baseDelay: number = 1000;
   protected readonly maxDelay: number = 10000;
   protected readonly jitterMax: number = 1000;
-  protected embeddingDimension: EmbeddingDimensionColumn = DIMENSION_MAP[384];
+  // --- MODIFIED: embeddingDimension is now set in constructor ---
+  protected readonly embeddingDimension: EmbeddingDimensionColumn;
 
   protected abstract withDatabase<T>(operation: () => Promise<T>): Promise<T>;
   public abstract init(): Promise<void>;
@@ -90,13 +91,26 @@ export abstract class BaseDrizzleAdapter<
   protected agentId: UUID;
 
   /**
-   * Constructor for creating a new instance of Agent with the specified agentId.
-   *
-   * @param {UUID} agentId - The unique identifier for the agent.
+   * Constructor for BaseDrizzleAdapter.
+   * @param agentId - The unique identifier for the agent.
+   * @param embeddingDimensionValue - The numerical dimension of the embeddings (e.g., 1536).
    */
-  constructor(agentId: UUID) {
-    super();
+  constructor(agentId: UUID, embeddingDimensionValue: number = 1536) {
+    super(); // --- ADDED super() call ---
     this.agentId = agentId;
+
+    // --- MODIFIED: Use embeddingDimensionValue directly as key ---
+    const dimensionColumn = DIMENSION_MAP[embeddingDimensionValue];
+    if (!dimensionColumn) {
+      const validDims = Object.keys(DIMENSION_MAP).join(', ');
+      throw new Error(
+        `Unsupported embedding dimension: ${embeddingDimensionValue}. Valid dimensions are: ${validDims}. Did you update schema/embedding.ts?`
+      );
+    }
+    this.embeddingDimension = dimensionColumn;
+    logger.debug(
+      `[BaseDrizzleAdapter] Initialized with embedding dimension: ${embeddingDimensionValue} (column: ${this.embeddingDimension})`
+    );
   }
 
   /**
@@ -166,31 +180,6 @@ export abstract class BaseDrizzleAdapter<
     await this.createAgent(agent);
 
     return agent as Agent;
-  }
-
-  /**
-   * Asynchronously ensures that the given embedding dimension is valid for the agent.
-   *
-   * @param {number} dimension - The dimension to ensure for the embedding.
-   * @returns {Promise<void>} - Resolves once the embedding dimension is ensured.
-   */
-  async ensureEmbeddingDimension(dimension: number) {
-    const existingMemory = await this.db
-      .select({
-        embedding: embeddingTable,
-      })
-      .from(memoryTable)
-      .innerJoin(embeddingTable, eq(embeddingTable.memoryId, memoryTable.id))
-      .where(eq(memoryTable.agentId, this.agentId))
-      .limit(1);
-
-    if (existingMemory.length > 0) {
-      const usedDimension = Object.entries(DIMENSION_MAP).find(
-        ([_, colName]) => existingMemory[0].embedding[colName] !== null
-      );
-    }
-
-    this.embeddingDimension = DIMENSION_MAP[dimension];
   }
 
   /**
@@ -1392,28 +1381,42 @@ export abstract class BaseDrizzleAdapter<
         cleanVector
       )})`;
 
-      const conditions = [eq(memoryTable.type, params.tableName)];
+      // Start building the conditions array, ensuring it's correctly typed
+      const conditions: import('drizzle-orm').SQL[] = [
+        eq(memoryTable.type, params.tableName),
+        eq(memoryTable.agentId, this.agentId),
+      ];
 
       if (params.unique) {
         conditions.push(eq(memoryTable.unique, true));
       }
-
-      conditions.push(eq(memoryTable.agentId, this.agentId));
-
-      // Add filters based on direct params
       if (params.roomId) {
         conditions.push(eq(memoryTable.roomId, params.roomId));
       }
       if (params.worldId) {
         conditions.push(eq(memoryTable.worldId, params.worldId));
       }
+
+      // Strict entityId filter:
       if (params.entityId) {
-        conditions.push(eq(memoryTable.entityId, params.entityId));
+        conditions.push(eq(memoryTable.entityId, params.entityId)); // Only match the EXACT entityId passed
       }
 
+      // Add similarity threshold condition if provided
       if (params.match_threshold) {
         conditions.push(gte(similarity, params.match_threshold));
       }
+
+      // Combine all conditions using and()
+      // No need to check if whereCondition is undefined now, as conditions always has items
+      const whereCondition = and(...conditions);
+
+      // Ensure whereCondition is not undefined before passing to .where()
+      // if (!whereCondition) {
+      //   // This case should technically not happen due to agentId filter, but handle defensively
+      //   logger.warn('No valid conditions generated for searchMemoriesByEmbedding');
+      //   return [];
+      // }
 
       const results = await this.db
         .select({
@@ -1423,7 +1426,7 @@ export abstract class BaseDrizzleAdapter<
         })
         .from(embeddingTable)
         .innerJoin(memoryTable, eq(memoryTable.id, embeddingTable.memoryId))
-        .where(and(...conditions))
+        .where(whereCondition)
         .orderBy(desc(similarity))
         .limit(params.count ?? 10);
 

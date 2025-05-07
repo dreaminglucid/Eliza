@@ -4,6 +4,7 @@ import { SOCKET_MESSAGE_TYPE } from '@elizaos/core';
 import type { Server as SocketIOServer } from 'socket.io';
 import type { RemoteSocket, Socket } from 'socket.io';
 import type { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { EventType } from '@elizaos/core';
 
 export class SocketIORouter {
   private agents: Map<UUID, IAgentRuntime>;
@@ -273,18 +274,40 @@ export class SocketIORouter {
     }
 
     try {
-      // Generate proper UUIDs
-      const uniqueRoomId = createUniqueUuid(runtime, roomId);
-      const entityId = createUniqueUuid(runtime, senderId);
+      const timestamp = Date.now().toString();
+      const messageId = createUniqueUuid(runtime, timestamp);
+
+      // --- MODIFIED LOGIC FOR entityId ---
+      let entityId: UUID;
+      const validatedSenderId = validateUuid(senderId); // Attempt to validate senderId as a UUID
+      if (validatedSenderId) {
+        entityId = validatedSenderId; // If senderId is a valid UUID, use it directly
+        logger.info(
+          `[SocketIO Backend] createMessageInAgentMemory: Using validated senderId as entityId: ${entityId}`
+        );
+      } else {
+        entityId = createUniqueUuid(runtime, senderId); // Otherwise, create a new UUID (fallback, though should ideally be a UUID already)
+        logger.warn(
+          `[SocketIO Backend] createMessageInAgentMemory: senderId was not a valid UUID. Created new entityId: ${entityId} from senderId: ${senderId}`
+        );
+      }
+      // --- END MODIFIED LOGIC ---
+
+      // --- ADDED LOGS ---
+      logger.info(
+        `[SocketIO Backend] createMessageInAgentMemory: Original senderId from payload: ${senderId}`
+      );
+      logger.info(
+        `[SocketIO Backend] createMessageInAgentMemory: Final entityId to be used: ${entityId}`
+      );
+      // ------------------
 
       // Ensure connection for entity
       try {
-        logger.info(
-          `[SocketIO] Ensuring connection for entity ${entityId} in room ${uniqueRoomId}`
-        );
+        logger.info(`[SocketIO Backend] Calling ensureConnection with entityId: ${entityId}`);
         await runtime.ensureConnection({
           entityId,
-          roomId: uniqueRoomId,
+          roomId: messageId,
           userName: senderName,
           name: senderName,
           source,
@@ -304,12 +327,56 @@ export class SocketIORouter {
       }
 
       // Create memory for message
-      await this.createMemoryForMessage(runtime, {
+      const content: Content = {
         text,
+        attachments: [],
         source,
+        inReplyTo: undefined,
+        channelType: ChannelType.API,
+      };
+
+      const memory: Memory = {
+        id: messageId,
+        agentId: runtime.agentId,
         entityId,
-        roomId: uniqueRoomId,
+        roomId,
+        content,
+        createdAt: Date.now(),
+      };
+
+      logger.info(`[SocketIO] Adding embedding to memory for message ${memory.id}`);
+      await runtime.addEmbeddingToMemory(memory);
+
+      logger.info(`[SocketIO] Creating memory for message ${memory.id}`);
+      await runtime.createMemory(memory, 'messages');
+      logger.info(`[SocketIO] Created memory successfully`);
+
+      // --- MODIFIED CHECKPOINT LOG ---
+      logger.info(
+        `[SocketIO Router] Emitting MESSAGE_RECEIVED. Message.EntityID: ${memory.entityId}, Message.ID: ${memory.id}, RoomID: ${memory.roomId}`
+      );
+      // -----------------------------
+
+      // --- Emit MESSAGE_RECEIVED event ---
+      await runtime.emitEvent(EventType.MESSAGE_RECEIVED, {
+        runtime,
+        message: memory, // Pass the memory object with the correct entityId
+        // Define a basic callback or handle appropriately if needed for socket responses
+        callback: async (responseContent: Content) => {
+          logger.info(
+            `[SocketIO Callback] Received response for message ${memory.id}: ${responseContent.text?.substring(0, 50)}...`
+          );
+          // Potentially broadcast the agent's response back via socket here
+          // Example (needs refinement based on desired broadcast format):
+          // this.broadcastMessageToRoom(socket, data.roomId, { /* format agent response */ });
+          return []; // Return empty array as per HandlerCallback type
+        },
+        source: 'socketio', // Indicate the source
       });
+      logger.info(`[SocketIO] Emitted MESSAGE_RECEIVED for memory ${memory.id}`);
+      // --- ADDED LOG AFTER EMIT ---
+      logger.info(`[SocketIO] >>>>>>>>>>>> CHECKPOINT: Just after emitting event. <<<<<<<<<<<<`);
+      // ---------------------------
     } catch (error) {
       logger.error(`[SocketIO] Error processing message: ${error.message}`, error);
       this.sendErrorResponse(socket, `[SocketIO] Error processing message: ${error.message}`);
@@ -337,46 +404,6 @@ export class SocketIORouter {
       });
       logger.info(`[SocketIO] Relationship created successfully`);
     }
-  }
-
-  private async createMemoryForMessage(
-    runtime: IAgentRuntime,
-    data: {
-      text: string;
-      source?: string;
-      entityId: UUID;
-      roomId: UUID;
-    }
-  ) {
-    const { text, source, entityId, roomId } = data;
-
-    // Generate a message ID
-    const timestamp = Date.now().toString();
-    const messageId = createUniqueUuid(runtime, timestamp);
-
-    const content: Content = {
-      text,
-      attachments: [],
-      source,
-      inReplyTo: undefined,
-      channelType: ChannelType.API,
-    };
-
-    const memory: Memory = {
-      id: createUniqueUuid(runtime, messageId),
-      agentId: runtime.agentId,
-      entityId,
-      roomId,
-      content,
-      createdAt: Date.now(),
-    };
-
-    logger.info(`[SocketIO] Adding embedding to memory for message ${memory.id}`);
-    await runtime.addEmbeddingToMemory(memory);
-
-    logger.info(`[SocketIO] Creating memory for message ${memory.id}`);
-    await runtime.createMemory(memory, 'messages');
-    logger.info(`[SocketIO] Created memory successfully`);
   }
 
   private broadcastMessageToRoom(socket: Socket, roomId: string, payload: any) {

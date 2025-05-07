@@ -473,13 +473,6 @@ export abstract class DatabaseAdapter<DB = unknown> implements IDatabaseAdapter 
   abstract ensureAgentExists(agent: Partial<Agent>): Promise<Agent>;
 
   /**
-   * Ensures an embedding dimension exists in the database.
-   * @param dimension The dimension to ensure exists.
-   * @returns A Promise that resolves when the embedding dimension has been ensured to exist.
-   */
-  abstract ensureEmbeddingDimension(dimension: number): Promise<void>;
-
-  /**
    * Retrieves a cached value by key from the database.
    * @param key The key to look up in the cache
    * @returns Promise resolving to the cached string value

@@ -7,6 +7,7 @@ import {
   logger as Logger,
   logger,
   SOCKET_MESSAGE_TYPE,
+  validateUuid,
 } from '@elizaos/core';
 import type { Tracer } from '@opentelemetry/api';
 import { SpanStatusCode } from '@opentelemetry/api';
@@ -73,7 +74,21 @@ async function processSocketMessage(
     return;
   }
 
-  const entityId = createUniqueUuid(runtime, senderId);
+  let entityId: UUID;
+  const validatedSenderId = validateUuid(senderId); // Attempt to validate senderId as a UUID
+  if (validatedSenderId) {
+    entityId = validatedSenderId; // If senderId is a valid UUID, use it directly
+    logger.info(`[processSocketMessage] Using validated senderId as entityId: ${entityId}`);
+  } else {
+    entityId = createUniqueUuid(runtime, senderId); // Otherwise, create a new UUID (fallback)
+    logger.warn(
+      `[processSocketMessage] senderId was not a valid UUID. Created new entityId: ${entityId} from senderId: ${senderId}`
+    );
+  }
+
+  logger.info(`[processSocketMessage] Original senderId from payload: ${senderId}`);
+  logger.info(`[processSocketMessage] Final entityId to be used: ${entityId}`);
+
   const uniqueRoomId = createUniqueUuid(runtime, socketRoomId);
   const source = payload.source;
   const worldId = payload.worldId;
@@ -174,7 +189,12 @@ async function processSocketMessage(
       }
     };
 
-    logger.debug('Emitting MESSAGE_RECEIVED', { messageId: newMessage.id });
+    // Comment out the old debug log
+    // logger.debug('Emitting MESSAGE_RECEIVED', { messageId: newMessage.id });
+    // Add new specific info log
+    logger.info(
+      `[API processSocketMessage] Emitting MESSAGE_RECEIVED. Message.EntityID: ${newMessage.entityId}, Message.ID: ${newMessage.id}, RoomID: ${newMessage.roomId}`
+    );
 
     // Emit message received event to trigger agent's message handler
     runtime.emitEvent(EventType.MESSAGE_RECEIVED, {
